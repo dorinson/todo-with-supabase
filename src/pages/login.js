@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { supabaseClient } from '../supabase/client';
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
   const [email, setEmail] = useState('');
+  const navigate = useNavigate();
 
   function handleChange(newValue) {
     setEmail(newValue);
@@ -12,14 +14,20 @@ function Login() {
     event.preventDefault();
 
     try {
-      const result = await supabaseClient.auth.signIn({
+      await supabaseClient.auth.signIn({
         email,
       });
-      console.log(`[handleSubmit] [Result]`, result);
     } catch (error) {
       console.error(`[handleSubmit] [Error] ${error}`);
     }
   }
+
+  useEffect(() => {
+    const user = supabaseClient.auth.user();
+    if (user) {
+      navigate('/');
+    }
+  }, [navigate]);
 
   return (
     <div>
