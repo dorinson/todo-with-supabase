@@ -1,5 +1,5 @@
-import { createContext, useContext } from 'react';
-// import { supabaseClient } from '../supabase/client';
+import { createContext, useContext, useState } from 'react';
+import { supabaseClient } from '../supabase/client';
 
 export const TaskContext = createContext();
 
@@ -14,5 +14,36 @@ export function useTaskContext() {
 }
 
 export function TaskContextProvider({ children }) {
-  return <TaskContext.Provider value={{ name: 'german' }}>{children}</TaskContext.Provider>;
+  const [tasks, setTasks] = useState([]);
+  const [adding, setAdding] = useState(false);
+
+  async function getTasks(done = false) {
+    const user = supabaseClient.auth.user();
+    const { error, data } = await supabaseClient
+      .from('tasks')
+      .select()
+      .eq('userId', user.id)
+      .eq('done', done)
+      .order('id', { ascending: false });
+
+    if (error) {
+      throw error;
+    }
+
+    setTasks(data);
+  }
+
+  async function createTask(taskName) {
+    setAdding(true);
+    try {
+      const { id } = supabaseClient.auth.user();
+      const { error, data } = await supabaseClient.from('tasks').insert({ name: taskName, userId: id });
+      if (error) throw error;
+      setTasks([...tasks, ...data]);
+    } catch (error) {
+      console.error(error);
+    }
+    setAdding(false);
+  }
+  return <TaskContext.Provider value={{ tasks, getTasks, createTask, adding }}>{children}</TaskContext.Provider>;
 }

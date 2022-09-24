@@ -20,9 +20,6 @@ function App() {
 
   useEffect(() => {
     supabaseClient.auth.onAuthStateChange((event, session) => {
-      console.log('event', event);
-      console.log('session', session);
-
       if (!session) {
         navigate('/login');
       } else {

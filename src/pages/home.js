@@ -1,21 +1,24 @@
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import TaskForm from '../components/TaskForm';
-import { useTaskContext } from '../context/TaskContext';
-// import { supabaseClient } from '../supabase/client';
-// import { useNavigate } from 'react-router-dom';
+import { supabaseClient } from '../supabase/client';
+import TaskList from '../components/TaskList';
 
 function Home() {
-  const context = useTaskContext();
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(context);
-  }, [context]);
+    if (!supabaseClient.auth.user()) {
+      navigate('/login');
+    }
+  }, [navigate]);
 
   return (
     <>
       <h1>Home</h1>
+      <button onClick={() => supabaseClient.auth.signOut()}>Logout</button>
       <TaskForm />
+      <TaskList />
     </>
   );
 }
