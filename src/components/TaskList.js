@@ -3,21 +3,29 @@ import { useTaskContext } from '../context/TaskContext';
 import TaskCard from './TaskCard';
 
 function TaskList() {
-  const { tasks, getTasks } = useTaskContext();
+  const { tasks, getTasks, loading } = useTaskContext();
 
   useEffect(() => {
     getTasks();
-  }, [getTasks]);
+  }, []);
 
-  const taskList = tasks.map((task) => {
-    return (
-      <div key={task.id}>
-        <TaskCard task={task} />
-      </div>
-    );
-  });
+  function render() {
+    if (loading) {
+      return <h1>Loading...</h1>;
+    } else if (tasks.length === 0) {
+      return <h1>There is no task to show.</h1>;
+    } else {
+      return tasks.map((task) => {
+        return (
+          <div key={task.id}>
+            <TaskCard task={task} />
+          </div>
+        );
+      });
+    }
+  }
 
-  return <>{taskList}</>;
+  return <div>{render()}</div>;
 }
 
 export default TaskList;

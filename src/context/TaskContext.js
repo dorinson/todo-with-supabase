@@ -16,8 +16,10 @@ export function useTaskContext() {
 export function TaskContextProvider({ children }) {
   const [tasks, setTasks] = useState([]);
   const [adding, setAdding] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   async function getTasks(done = false) {
+    setLoading(true);
     const user = supabaseClient.auth.user();
     const { error, data } = await supabaseClient
       .from('tasks')
@@ -30,6 +32,7 @@ export function TaskContextProvider({ children }) {
       throw error;
     }
 
+    setLoading(false);
     setTasks(data);
   }
 
@@ -45,5 +48,7 @@ export function TaskContextProvider({ children }) {
     }
     setAdding(false);
   }
-  return <TaskContext.Provider value={{ tasks, getTasks, createTask, adding }}>{children}</TaskContext.Provider>;
+  return (
+    <TaskContext.Provider value={{ tasks, adding, loading, getTasks, createTask }}>{children}</TaskContext.Provider>
+  );
 }
