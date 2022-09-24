@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useTaskContext } from '../context/TaskContext';
+import TaskCard from './TaskCard';
 
 function TaskList() {
   const { tasks, getTasks } = useTaskContext();
@@ -11,8 +12,7 @@ function TaskList() {
   const taskList = tasks.map((task) => {
     return (
       <div key={task.id}>
-        <h3>{task.name}</h3>
-        <p>{JSON.stringify(task.done)}</p>
+        <TaskCard task={task} />
       </div>
     );
   });
