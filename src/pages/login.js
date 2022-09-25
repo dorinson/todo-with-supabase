@@ -18,7 +18,8 @@ function Login() {
         email,
       });
     } catch (error) {
-      console.error(`[handleSubmit] [Error] ${error}`);
+      console.error(error);
+      throw error;
     }
   }
 

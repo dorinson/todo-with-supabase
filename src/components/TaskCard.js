@@ -1,8 +1,11 @@
 import React from 'react';
+import { useTaskContext } from '../context/TaskContext';
 
 function TaskCard({ task }) {
+  const { deleteTask, deleting } = useTaskContext();
+
   function handleDelete() {
-    console.log('deleting');
+    deleteTask(task.id);
   }
 
   function handleToggleDone() {
@@ -14,7 +17,9 @@ function TaskCard({ task }) {
       <h3>{task.name}</h3>
       <p>{JSON.stringify(task.done)}</p>
       <div>
-        <button onClick={handleDelete}>Delete</button>
+        <button onClick={handleDelete} disabled={deleting}>
+          {deleting ? 'Deleting...' : 'Delete'}
+        </button>
         <button onClick={handleToggleDone}>Done</button>
       </div>
     </>

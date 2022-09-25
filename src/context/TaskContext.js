@@ -17,6 +17,7 @@ export function TaskContextProvider({ children }) {
   const [tasks, setTasks] = useState([]);
   const [adding, setAdding] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   async function getTasks(done = false) {
     setLoading(true);
@@ -45,10 +46,27 @@ export function TaskContextProvider({ children }) {
       setTasks([...tasks, ...data]);
     } catch (error) {
       console.error(error);
+      throw error;
     }
     setAdding(false);
   }
+
+  async function deleteTask(taskId) {
+    setDeleting(true);
+    const user = await supabaseClient.auth.user();
+    const { error, data } = await supabaseClient.from('tasks').delete().eq('userId', user.id).eq('id', taskId);
+    if (error) {
+      console.error(error);
+      throw error;
+    }
+    const newTasks = tasks.filter((task) => task.id !== taskId);
+    setTasks(newTasks);
+    setDeleting(false);
+  }
+
   return (
-    <TaskContext.Provider value={{ tasks, adding, loading, getTasks, createTask }}>{children}</TaskContext.Provider>
+    <TaskContext.Provider value={{ tasks, adding, loading, deleting, getTasks, createTask, deleteTask }}>
+      {children}
+    </TaskContext.Provider>
   );
 }
