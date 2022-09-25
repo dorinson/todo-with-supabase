@@ -2,14 +2,14 @@ import React from 'react';
 import { useTaskContext } from '../context/TaskContext';
 
 function TaskCard({ task }) {
-  const { deleteTask, deleting } = useTaskContext();
+  const { deleteTask, updateTask, deleting, updating } = useTaskContext();
 
   function handleDelete() {
     deleteTask(task.id);
   }
 
   function handleToggleDone() {
-    console.log('toggling');
+    updateTask(task.id, { done: !task.done });
   }
 
   return (
